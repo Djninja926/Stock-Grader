@@ -11,5 +11,25 @@ class NewsSentimentEngine:
         self.analyzer = pipeline("sentiment-analysis", model="ProsusAI/finbert")
 
     def analyze_headlines(self, headlines):
-        # We will build the logic here next
-        pass
+        if not headlines:
+            return 50.0
+        
+        try:
+            results = self.analyzer(headlines)
+        except Exception as e:
+            print(f"Error analyzing headlines: {e}")
+            return 50.0
+        
+        score = 0
+
+        for result in results:
+            label = result['label']
+            confidence = result['score']
+
+
+            if label == 'positive':
+                score += (50 + (50 * confidence))
+            elif label == 'negative':
+                score += (50 - (50 * confidence))
+            else:
+                score += 50;
